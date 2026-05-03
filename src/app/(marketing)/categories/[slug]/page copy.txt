@@ -4,18 +4,11 @@ import { ArrowLeft, Sparkles } from 'lucide-react'
 import type { Metadata } from 'next'
 
 import {
-  fetchCourses,
-  fetchAllCategories,
-  fetchCategoryBySlug,
-  fetchPriceRange,
+  fetchCourses, fetchAllCategories, fetchCategoryBySlug, fetchPriceRange,
 } from '@/lib/queries/courses'
 import { parseFilters, type SearchParams } from '@/lib/url-state'
 
-import {
-  CourseCard,
-  type CourseWithRelations,
-} from '@/components/shared/course-card'
-
+import { CourseCard } from '@/components/shared/course-card'
 import { CatalogSearch } from '@/components/catalog/catalog-search'
 import { CatalogSort } from '@/components/catalog/catalog-sort'
 import { CatalogFilters } from '@/components/catalog/catalog-filters'
@@ -25,7 +18,6 @@ import { CatalogMobileFilters } from '@/components/catalog/catalog-mobile-filter
 import { CatalogEmpty } from '@/components/catalog/catalog-empty'
 import { Badge } from '@/components/ui/badge'
 import { Reveal } from '@/components/effects/reveal'
-import type { Category } from '@/types/database'
 
 interface Props {
   params: Promise<{ slug: string }>
@@ -34,17 +26,12 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params
-  const category = (await fetchCategoryBySlug(slug)) as Category | null
+  const category = await fetchCategoryBySlug(slug)
 
-  if (!category) {
-    return {
-      title: 'Catégorie introuvable',
-      description: 'Cette catégorie est introuvable.',
-    }
-  }
+  if (!category) return { title: 'Catégorie introuvable' }
 
   return {
-    title: category.name,
+    title: `${category.name}`,
     description: category.description || `Découvre tous les cours en ${category.name}.`,
   }
 }
@@ -53,24 +40,17 @@ export default async function CategoryPage({ params, searchParams }: Props) {
   const { slug } = await params
   const sp = await searchParams
 
-  const category = (await fetchCategoryBySlug(slug)) as Category | null
-
-  if (!category) {
-    notFound()
-  }
+  const category = await fetchCategoryBySlug(slug)
+  if (!category) notFound()
 
   const filters = parseFilters(sp)
-
-  // Force la catégorie courante dans les filtres
-  filters.categories = [slug]
+  filters.categories = [slug]  // Force la catégorie
 
   const [{ courses, total, totalPages, page }, categories, priceRange] = await Promise.all([
     fetchCourses(filters),
     fetchAllCategories(),
     fetchPriceRange(),
   ])
-
-  const categoryCourses = courses as CourseWithRelations[]
 
   return (
     <div className="relative min-h-screen">
@@ -93,17 +73,14 @@ export default async function CategoryPage({ params, searchParams }: Props) {
             <Badge variant="gradient" icon={<Sparkles className="h-3 w-3" />} className="mb-4">
               {category.is_featured ? 'Catégorie populaire' : 'Catégorie'}
             </Badge>
-
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4">
               <span className="text-gradient-emerald">{category.name}</span>
             </h1>
-
             {category.description && (
               <p className="text-lg text-muted-foreground mb-2">
                 {category.description}
               </p>
             )}
-
             <p className="text-sm text-muted-foreground">
               <span className="text-emerald-400 font-semibold">{total} cours</span>{' '}
               disponibles dans cette catégorie
@@ -131,23 +108,21 @@ export default async function CategoryPage({ params, searchParams }: Props) {
                   priceRange={priceRange}
                   hideCategoryFilter
                 />
-
                 <p className="text-sm text-muted-foreground hidden sm:block">
                   <span className="font-semibold text-foreground">{total}</span> cours
                 </p>
               </div>
-
               <CatalogSort />
             </div>
 
             <CatalogActiveFilters categories={categories} />
 
-            {categoryCourses.length === 0 ? (
+            {courses.length === 0 ? (
               <CatalogEmpty />
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
-                {categoryCourses.map((course) => (
-                  <CourseCard key={course.id} course={course} />
+                {courses.map((course) => (
+                  <CourseCard key={course.id} course={course as never} />
                 ))}
               </div>
             )}

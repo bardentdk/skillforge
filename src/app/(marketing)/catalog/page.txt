@@ -4,12 +4,7 @@ import type { Metadata } from 'next'
 import { fetchCourses, fetchAllCategories, fetchPriceRange } from '@/lib/queries/courses'
 import { parseFilters, type SearchParams } from '@/lib/url-state'
 
-import {
-  CourseCard,
-  CourseCardSkeleton,
-  type CourseWithRelations,
-} from '@/components/shared/course-card'
-
+import { CourseCard, CourseCardSkeleton } from '@/components/shared/course-card'
 import { CatalogSearch } from '@/components/catalog/catalog-search'
 import { CatalogSort } from '@/components/catalog/catalog-sort'
 import { CatalogFilters } from '@/components/catalog/catalog-filters'
@@ -23,8 +18,7 @@ import { Reveal } from '@/components/effects/reveal'
 
 export const metadata: Metadata = {
   title: 'Catalogue de cours',
-  description:
-    "Découvre 500+ cours premium en tech & digital. Du débutant à l'expert, trouve la formation qui te fera passer au niveau supérieur.",
+  description: 'Découvre 500+ cours premium en tech & digital. Du débutant à l\'expert, trouve la formation qui te fera passer au niveau supérieur.',
 }
 
 interface CatalogPageProps {
@@ -41,8 +35,6 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
     fetchPriceRange(),
   ])
 
-  const catalogCourses = courses as CourseWithRelations[]
-
   return (
     <div className="relative min-h-screen">
       {/* Background effects */}
@@ -56,16 +48,15 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
             <Badge variant="gradient" icon={<Sparkles className="h-3 w-3" />} className="mb-4">
               Catalogue complet
             </Badge>
-
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight mb-4">
-              Trouve ton <span className="text-gradient-emerald">prochain cours</span>
+              Trouve ton{' '}
+              <span className="text-gradient-emerald">prochain cours</span>
             </h1>
-
             <p className="text-lg text-muted-foreground">
               {total > 0 ? (
                 <>
-                  <span className="text-emerald-400 font-semibold">{total} cours</span> en tech &
-                  digital, par les meilleurs experts du marché.
+                  <span className="text-emerald-400 font-semibold">{total} cours</span> en tech & digital,
+                  par les meilleurs experts du marché.
                 </>
               ) : (
                 'Découvre 500+ cours en tech & digital.'
@@ -95,14 +86,15 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
             {/* Toolbar */}
             <div className="flex items-center justify-between gap-4 mb-6">
               <div className="flex items-center gap-3">
-                <CatalogMobileFilters categories={categories} priceRange={priceRange} />
-
+                <CatalogMobileFilters
+                  categories={categories}
+                  priceRange={priceRange}
+                />
                 <p className="text-sm text-muted-foreground hidden sm:block">
                   <span className="font-semibold text-foreground">{total}</span>{' '}
                   {total === 1 ? 'cours' : 'cours'} trouvés
                 </p>
               </div>
-
               <CatalogSort />
             </div>
 
@@ -110,13 +102,13 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
             <CatalogActiveFilters categories={categories} />
 
             {/* Results */}
-            {catalogCourses.length === 0 ? (
+            {courses.length === 0 ? (
               <CatalogEmpty />
             ) : (
               <Suspense fallback={<CatalogGridSkeleton />}>
                 <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-6">
-                  {catalogCourses.map((course) => (
-                    <CourseCard key={course.id} course={course} />
+                  {courses.map((course) => (
+                    <CourseCard key={course.id} course={course as never} />
                   ))}
                 </div>
               </Suspense>

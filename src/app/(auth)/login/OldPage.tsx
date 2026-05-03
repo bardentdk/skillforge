@@ -1,6 +1,6 @@
 'use client'
 
-import { Suspense, useState } from 'react'
+import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
@@ -16,14 +16,6 @@ import { ROUTES } from '@/lib/constants'
 import { loginAction, googleOAuthAction } from '../actions'
 
 export default function LoginPage() {
-  return (
-    <Suspense fallback={<LoginPageSkeleton />}>
-      <LoginPageContent />
-    </Suspense>
-  )
-}
-
-function LoginPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirectTo = searchParams.get('redirect') || ROUTES.dashboard.student
@@ -70,13 +62,11 @@ function LoginPageContent() {
           <Badge variant="gradient" icon={<Sparkles className="h-3 w-3" />} className="mb-4">
             Bon retour parmi nous
           </Badge>
-
           <h1 className="text-3xl font-bold mb-2">
             Connexion à <span className="text-gradient-emerald">Learnova</span>
           </h1>
-
           <p className="text-sm text-muted-foreground">
-            Continue ton apprentissage là où tu t&apos;étais arrêté
+            Continue ton apprentissage là où tu t'étais arrêté
           </p>
         </div>
 
@@ -121,7 +111,7 @@ function LoginPageContent() {
               rightIcon={
                 <button
                   type="button"
-                  onClick={() => setShowPassword((current) => !current)}
+                  onClick={() => setShowPassword(!showPassword)}
                   className="hover:text-foreground transition-colors"
                   aria-label={showPassword ? 'Cacher' : 'Afficher'}
                 >
@@ -132,7 +122,6 @@ function LoginPageContent() {
               required
               autoComplete="current-password"
             />
-
             <div className="text-right mt-2">
               <Link
                 href={ROUTES.auth.forgot}
@@ -168,33 +157,11 @@ function LoginPageContent() {
 
       <p className="text-center text-xs text-muted-foreground mt-6">
         En continuant, tu acceptes nos{' '}
-        <Link href="/legal/terms" className="underline hover:text-foreground transition-colors">
-          CGU
-        </Link>{' '}
+        <Link href="/legal/terms" className="underline hover:text-foreground transition-colors">CGU</Link>{' '}
         et notre{' '}
-        <Link href="/legal/privacy" className="underline hover:text-foreground transition-colors">
-          Politique de confidentialité
-        </Link>
+        <Link href="/legal/privacy" className="underline hover:text-foreground transition-colors">Politique de confidentialité</Link>
       </p>
     </motion.div>
-  )
-}
-
-function LoginPageSkeleton() {
-  return (
-    <div className="w-full max-w-md">
-      <Card variant="glow" padding="xl" className="backdrop-blur-2xl">
-        <div className="animate-pulse space-y-6">
-          <div className="mx-auto h-6 w-40 rounded-full bg-muted" />
-          <div className="mx-auto h-8 w-64 rounded bg-muted" />
-          <div className="mx-auto h-4 w-72 rounded bg-muted" />
-          <div className="h-12 w-full rounded-xl bg-muted" />
-          <div className="h-10 w-full rounded-xl bg-muted" />
-          <div className="h-10 w-full rounded-xl bg-muted" />
-          <div className="h-12 w-full rounded-xl bg-muted" />
-        </div>
-      </Card>
-    </div>
   )
 }
 
