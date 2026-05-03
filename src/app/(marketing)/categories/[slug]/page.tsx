@@ -11,10 +11,7 @@ import {
 } from '@/lib/queries/courses'
 import { parseFilters, type SearchParams } from '@/lib/url-state'
 
-import {
-  CourseCard,
-  type CourseWithRelations,
-} from '@/components/shared/course-card'
+import { CourseCard } from '@/components/shared/course-card'
 
 import { CatalogSearch } from '@/components/catalog/catalog-search'
 import { CatalogSort } from '@/components/catalog/catalog-sort'
@@ -25,7 +22,7 @@ import { CatalogMobileFilters } from '@/components/catalog/catalog-mobile-filter
 import { CatalogEmpty } from '@/components/catalog/catalog-empty'
 import { Badge } from '@/components/ui/badge'
 import { Reveal } from '@/components/effects/reveal'
-import type { Category } from '@/types/database'
+import type { Category, CourseWithRelations } from '@/types/database'
 
 interface Props {
   params: Promise<{ slug: string }>

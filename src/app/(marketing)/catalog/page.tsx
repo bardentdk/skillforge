@@ -4,11 +4,7 @@ import type { Metadata } from 'next'
 import { fetchCourses, fetchAllCategories, fetchPriceRange } from '@/lib/queries/courses'
 import { parseFilters, type SearchParams } from '@/lib/url-state'
 
-import {
-  CourseCard,
-  CourseCardSkeleton,
-  type CourseWithRelations,
-} from '@/components/shared/course-card'
+import { CourseCard, CourseCardSkeleton } from '@/components/shared/course-card'
 
 import { CatalogSearch } from '@/components/catalog/catalog-search'
 import { CatalogSort } from '@/components/catalog/catalog-sort'
@@ -20,6 +16,7 @@ import { CatalogEmpty } from '@/components/catalog/catalog-empty'
 import { Badge } from '@/components/ui/badge'
 import { Sparkles } from 'lucide-react'
 import { Reveal } from '@/components/effects/reveal'
+import { CourseWithRelations } from '@/types/database'
 
 export const metadata: Metadata = {
   title: 'Catalogue de cours',

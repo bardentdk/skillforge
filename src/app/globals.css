@@ -79,6 +79,8 @@
   --animate-scale-in: scale-in 0.4s ease-out;
   --animate-spin-slow: spin 8s linear infinite;
   --animate-orbit: orbit 20s linear infinite;
+  --animate-accordion-down: accordion-down 0.3s ease-out;
+  --animate-accordion-up: accordion-up 0.3s ease-out;
 }
 
 /* ═══ KEYFRAMES ═══ */
@@ -138,7 +140,15 @@
   from { transform: rotate(0deg) translateX(100px) rotate(0deg); }
   to { transform: rotate(360deg) translateX(100px) rotate(-360deg); }
 }
+@keyframes accordion-down {
+  from { height: 0; opacity: 0; }
+  to { height: var(--radix-accordion-content-height); opacity: 1; }
+}
 
+@keyframes accordion-up {
+  from { height: var(--radix-accordion-content-height); opacity: 1; }
+  to { height: 0; opacity: 0; }
+}
 /* ============================================
    THEME VARIABLES (Light & Dark)
 ============================================ */

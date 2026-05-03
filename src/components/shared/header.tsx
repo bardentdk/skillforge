@@ -22,6 +22,10 @@ import { Badge } from '@/components/ui/badge'
 import { UserMenu } from './user-menu'
 import { CommandPalette } from './command-palette'
 
+import { useCartStore } from '@/stores/cart-store'
+import { CartDrawer } from '@/components/cart/cart-drawer'
+import { createClient } from '@/lib/supabase/client'
+
 const CATEGORY_ICONS = {
   'web-development': Code2,
   'mobile-development': Smartphone,
@@ -73,9 +77,36 @@ export function Header() {
     }
     return () => { document.body.style.overflow = '' }
   }, [mobileMenuOpen])
+  const { count: cartCount, setCount: setCartCount, toggleDrawer } = useCartStore()
 
+  // Initial cart count fetch + subscribe to auth changes
+  useEffect(() => {
+    const supabase = createClient()
+
+    const fetchCount = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (!user) {
+        setCartCount(0)
+        return
+      }
+      const { count } = await supabase
+        .from('cart_items')
+        .select('*', { count: 'exact', head: true })
+        .eq('user_id', user.id)
+      setCartCount(count ?? 0)
+    }
+
+    fetchCount()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
+      fetchCount()
+    })
+
+    return () => subscription.unsubscribe()
+  }, [setCartCount])
   return (
     <>
+      <CartDrawer />
       <CommandPalette open={commandOpen} onOpenChange={setCommandOpen} />
 
       <motion.header
@@ -239,13 +270,16 @@ export function Header() {
 
               {/* Cart */}
               <button
+                onClick={toggleDrawer}
                 className="hidden md:flex h-10 w-10 rounded-xl glass items-center justify-center hover:border-emerald-500/30 transition-colors relative"
                 aria-label="Panier"
               >
                 <ShoppingCart className="h-4 w-4" />
-                <Badge variant="neon" size="sm" className="absolute -top-1 -right-1 h-4 min-w-4 px-1 justify-center">
-                  0
-                </Badge>
+                {cartCount > 0 && (
+                  <Badge variant="gradient" size="sm" className="absolute -top-1 -right-1 h-4 min-w-4 px-1 justify-center animate-fade-in">
+                    {cartCount}
+                  </Badge>
+                )}
               </button>
 
               {/* Theme toggle */}
